@@ -43,6 +43,10 @@ for this homework assignment in your GitHub account. Periodically push your comm
 to GitHub. When done with the assignment, paste in the URL of your GitHub project
 so that I can go look at it.
 
+## https://github.com/pramesh30/PCDA
+## Please refer to the hw_2files folder to view the commits
+
+
 ## Step 3 - Set working directory and explore data folder
 
 Set the working directory or create an R Studio project in the current folder. You'll notice that there is a folder named **data**.
@@ -116,8 +120,16 @@ income for the entire US.
 
 Write a short paragraph describing the distribution of median incomes.
 
+The graph shows that it is skewed towards the right
+
 ```{r}
-ggplot(data = county_df) + geom_histogram(mapping = aes(x = county_df$Income))
+ggplot(data = county_df) + geom_histogram(bins = 30, mapping = aes(x = county_df$Income))
+
+ggplot(data = county_df) + geom_boxplot(mapping = aes(x = "Income", y = county_df$Income))
+
+ggplot(data = county_df) + geom_density(mapping = aes(x= county_df$Income))
+
+ggplot(data = county_df) + geom_violin(mapping = aes(x = "Income", y = county_df$Income))
 
 ```
 
@@ -126,7 +138,9 @@ ggplot(data = county_df) + geom_histogram(mapping = aes(x = county_df$Income))
 Create a histogram of total population for counties in the US.
 
 ```{r histo_totpop}
-
+options(scipen=999)
+histo_totpop <- ggplot(data = county_df) + geom_histogram(bins = 30, mapping = aes(x = county_df$TotalPop))
+histo_totpop
 ```
 
 Repeat the histogram about but make the following style changes to the plot.
@@ -137,15 +151,31 @@ Repeat the histogram about but make the following style changes to the plot.
 * Change the colors of the bars to something other than the default black
 
 ```{r histo_stylechanges}
+histo_stylechanges <- ggplot(data = county_df) + geom_histogram(bins = 30, mapping = aes(x = county_df$TotalPop) , color = '#FFCC99', fill = '#FF91A4') + ggtitle("Distribution of population for US counties") + labs(y= "Number of counties", x = "Total Population", colour = county_df$TotalPop)
+
+histo_stylechanges
 
 ```
 
 **Hacker Extra** - Also create a kernel density plot overlaid on a histogram of
 Income. 
 
+```{r histoden}
+
+histoden <- ggplot(county_df, aes(x=county_df$Income)) + geom_histogram(bins = 30, aes(x=county_df$Income,y=..density..), fill = "#FF91A4", colour = "#FFCC99") + geom_density(alpha=.2, fill="#FF6666", colour = "black") + labs( x = "Income")
+histoden
+
+```
+
+
 Repeat the histogram but only for counties with less than 2.5 million people.
 
 ```{r histo_lt2.5m}
+
+county2.5 <- county_df %>% select (County, TotalPop, Income) %>% group_by(County) %>% filter(TotalPop < 2500000)
+county2.5
+histo_lt2.5m <- ggplot(data = county2.5) + geom_histogram (bins = 30, mapping = aes(x = county2.5$Income))
+histo_lt2.5m
 
 ```
 
@@ -160,13 +190,26 @@ differ with respect to distribution of median income over the counties?
 
 
 ```{r bp_inc_by_peninsula}
+box_incpen <- ggplot(data = county_MI) + geom_boxplot(aes(x = county_MI$peninsula, y = county_MI$Income)) + ggtitle("Distribution of Income Vs Peninsula") + labs(y= "Income", x = "Peninsula")
 
+box_incpen
 ```
 
 Create several more boxplots showing how the peninsulas compare with respect to
 some of the other variables. Summarize your findings in a few short paragraphs.
 
 ```{r more_boxplots}
+
+ggplot(county_MI) + geom_boxplot(aes(x = county_MI$peninsula, y = county_MI$Poverty , fill = county_MI$peninsula)) + ggtitle("Distribution of Poverty Vs Peninsula") + xlab("Peninsula") + ylab("Poverty")
+
+ggplot(county_MI) + geom_boxplot(aes(x = county_MI$peninsula, y = county_MI$Citizen , fill = county_MI$peninsula)) + ggtitle("Distribution of Citizen Vs Peninsula") + xlab("Peninsula") + ylab("Citizen")
+
+ggplot(county_MI) + geom_boxplot(aes(x = county_MI$peninsula, y = county_MI$Employed , fill = county_MI$peninsula)) + ggtitle("Distribution of Employed Vs Peninsula") + xlab("Peninsula") + ylab("Employed")
+
+ggplot(county_MI) + geom_boxplot(aes(x = county_MI$peninsula, y = county_MI$Women , fill = county_MI$peninsula)) + ggtitle("Distribution of Women Vs Peninsula") + xlab("Peninsula") + ylab("Income")
+
+ggplot(county_MI) + geom_boxplot(aes(x = county_MI$peninsula, y = county_MI$Men , fill = county_MI$peninsula)) + ggtitle("Distribution of Men Vs Peninsula") + xlab("Peninsular") + ylab("Income")
+
 
 ```
 
@@ -180,6 +223,12 @@ labels.
 
 ```{r faceted_histo}
 
+library(scales)
+
+faceted_histo <- ggplot(county_df) + geom_histogram(data = county_df, bins = 50, aes(x=county_df$Men))  + ggtitle("Men by Peninsula") + xlab("Region") + ylab("Number of Men") + facet_wrap(~ Region, scales = "free") 
+
+faceted_histo
+
 ```
 
 ### Problem 6 - Basic bar chart
@@ -188,6 +237,11 @@ Create a bar chart showing the number of counties by Region in the US. Make sure
 your graph has a title and good axis labels.
 
 ```{r bar_counties_by_region}
+
+bar_counties_by_region <- ggplot(county_df) + geom_bar(aes(x=county_df$Region)) + labs(y= "Number of Counties", x = "Region") + ggtitle("Number of Counties VS Region") 
+
+
+bar_counties_by_region
 
 ```
 
@@ -198,12 +252,20 @@ Income and MeanCommute.
 
 ```{r xy_inc_commute}
 
+xy_inc_commute <- ggplot(data = county_MI) + geom_point(mapping = aes(x = county_MI$Income, y = county_MI$MeanCommute)) + labs(y= "Mean Commute", x = "Income")
+
+xy_inc_commute
+
 ```
 
 Create a modified version of the above scatter plot in which the point color
 is mapped to peninsula.
 
 ```{r xy_inc_commute_peninsula}
+
+xy_inc_commute_peninsula <- ggplot(data = county_MI, aes(x= county_MI$Income, y = county_MI$MeanCommute, color = peninsula)) + geom_point() + labs(y= "Mean Commute", x = "Income")
+
+xy_inc_commute_peninsula
 
 ```
 
@@ -214,6 +276,8 @@ you facet by peninsula as well. How do the relationships compare across the
 peninsulas?
 
 ```{r xy_faceted_peninsula}
+
+ggplot(data = county_MI, aes(x= county_MI$Income, y = county_MI$MeanCommute, color = peninsula)) + geom_point() + labs(y= "Mean Commute", x = "Income")
 
 ```
 
