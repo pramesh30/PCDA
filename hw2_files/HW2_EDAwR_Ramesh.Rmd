@@ -162,7 +162,7 @@ Income.
 
 ```{r histoden}
 
-histoden <- ggplot(county_df, aes(x=county_df$Income)) + geom_histogram(bins = 30, aes(x=county_df$Income,y=..density..), fill = "#FF91A4", colour = "#FFCC99") + geom_density(alpha=.2, fill="#FF6666", colour = "black") + labs( x = "Income")
+histoden <- ggplot(county_df, aes(x=county_df$Income)) + geom_histogram(bins = 30, aes(x=county_df$Income, y = ..density..), fill = "#FF91A4", colour = "#FFCC99") + geom_density(alpha=.2, fill="#FF6666", colour = "black") + labs( x = "Income")
 histoden
 
 ```
@@ -174,7 +174,7 @@ Repeat the histogram but only for counties with less than 2.5 million people.
 
 county2.5 <- county_df %>% select (County, TotalPop, Income) %>% group_by(County) %>% filter(TotalPop < 2500000)
 county2.5
-histo_lt2.5m <- ggplot(data = county2.5) + geom_histogram (bins = 30, mapping = aes(x = county2.5$Income))
+histo_lt2.5m <- ggplot(data = county2.5) + geom_histogram (bins = 30, mapping = aes(x = county2.5$Income)) + labs( x = "Income")
 histo_lt2.5m
 
 ```
@@ -277,7 +277,15 @@ peninsulas?
 
 ```{r xy_faceted_peninsula}
 
-ggplot(data = county_MI, aes(x= county_MI$Income, y = county_MI$MeanCommute, color = peninsula)) + geom_point() + labs(y= "Mean Commute", x = "Income")
+ggplot(data = county_MI, aes(y = county_MI$Income, x = county_MI$MeanCommute, color = peninsula)) + geom_point() + labs(x= "Mean Commute", y = "Income") + facet_wrap(~peninsula) + ggtitle("Distirbution of Mean Commute Vs Income")
+
+ggplot(data = county_MI, aes(y = county_MI$Income, x = county_MI$Men, color = peninsula)) + geom_point() + labs(x = "Men", y = "Income") + facet_wrap(~peninsula) + ggtitle("Distirbution of Men Vs Income")
+
+ggplot(data = county_MI, aes(y = county_MI$Income, x = county_MI$Women, color = peninsula)) + geom_point() + labs(x = "Women", y = "Income") + facet_wrap(~peninsula) + ggtitle("Distirbution of Women Vs Income")
+
+ggplot(data = county_MI, aes(y = county_MI$Service, x = county_MI$Office, color = peninsula)) + geom_point() + labs(x = "Office", y = "Service") + facet_wrap(~peninsula) + ggtitle("Distirbution of Office Vs Service")
+
+ggplot(data = county_MI, aes(x= county_MI$Drive, y = county_MI$Walk, color = peninsula)) + geom_point() + labs(y= "Walk", x = "Drive") + facet_wrap(~peninsula) + ggtitle("Distirbution of Walk Vs Drive")
 
 ```
 
