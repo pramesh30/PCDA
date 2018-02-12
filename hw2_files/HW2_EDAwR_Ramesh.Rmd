@@ -100,6 +100,10 @@ Check the structure of each data.frame and use the `summary` function to begin
 exploring the data. Are there any NA values? What 
 differences do you notice between the structure of the two data frames.
 
+There are some NA values in county_df data frame, but none in county_MI.
+county_MI has an additional field called penninsula with UP and LP values. There are 83 records of 41 variables in county_MI and 3142 records of 40 variables in county_df.
+
+
 ```{r}
 str (county_df)
 str (county_MI)
@@ -120,7 +124,7 @@ income for the entire US.
 
 Write a short paragraph describing the distribution of median incomes.
 
-The graph shows that it is skewed towards the right
+The graph shows that it is skewed towards the right. Analysing the histogram shows 3142 observations grouped according to median income ranginG from approx 25000 to 125000. The shApe of graph shows a bell curve indicating normal distribution of data (income) with maximum number of people observed at income range between(40000 - 45000).
 
 ```{r}
 ggplot(data = county_df) + geom_histogram(bins = 30, mapping = aes(x = county_df$Income))
@@ -188,6 +192,10 @@ your graph has a title and good axis labels.
 Do the peninsulas 
 differ with respect to distribution of median income over the counties?
 
+LP and UP differ across peninsulas with respect to Incomes . AS seen in LP, Its evident that more then 50% values lie in the upper quartile meaning 50% of people have their incomes greater then the median income value.Thus we can conclude the the distribution in LP according to spread of income is not normal.In other words, data is skewed.
+
+In UP, data is less skewed making the values look equally distributed across the median value meaning there are 50% people have their incomes above median value and roughly 50% of them have their incomes below median value making the distrubution look like a normal distribution.
+
 
 ```{r bp_inc_by_peninsula}
 box_incpen <- ggplot(data = county_MI) + geom_boxplot(aes(x = county_MI$peninsula, y = county_MI$Income)) + ggtitle("Distribution of Income Vs Peninsula") + labs(y= "Income", x = "Peninsula")
@@ -198,20 +206,38 @@ box_incpen
 Create several more boxplots showing how the peninsulas compare with respect to
 some of the other variables. Summarize your findings in a few short paragraphs.
 
-```{r more_boxplots}
+```{r bp_cons_by_peninsula}
 
-ggplot(county_MI) + geom_boxplot(aes(x = county_MI$peninsula, y = county_MI$Poverty , fill = county_MI$peninsula)) + ggtitle("Distribution of Poverty Vs Peninsula") + xlab("Peninsula") + ylab("Poverty")
+ggplot(county_MI) + geom_boxplot(aes(x = county_MI$peninsula, y = county_MI$Citizen , fill = county_MI$peninsula)) + ggtitle("Distribution of Construction Vs Peninsula") + xlab("Peninsula") + ylab("Construction")
 
-ggplot(county_MI) + geom_boxplot(aes(x = county_MI$peninsula, y = county_MI$Citizen , fill = county_MI$peninsula)) + ggtitle("Distribution of Citizen Vs Peninsula") + xlab("Peninsula") + ylab("Citizen")
+```
+
+Percentage range for people in construction and maintenance for LP is 8-12 (more variable range) and in UP is 10-12. There is a skewness across median value (10.5) for LP which means the data is not normally distributed in these quartiles. 25 pecent of data in 2nd quartile in LP is more variable with respect to % of people in construction versus the 25 % of data in upper quartile. The median vaule for UP is around 10.5 but its distribution is skewed in such a way that data in 2nd quartile is less variable than the upper quartile.
+
+
+```{r bp_cons_by_peninsula}
 
 ggplot(county_MI) + geom_boxplot(aes(x = county_MI$peninsula, y = county_MI$Employed , fill = county_MI$peninsula)) + ggtitle("Distribution of Employed Vs Peninsula") + xlab("Peninsula") + ylab("Employed")
+```
 
-ggplot(county_MI) + geom_boxplot(aes(x = county_MI$peninsula, y = county_MI$Women , fill = county_MI$peninsula)) + ggtitle("Distribution of Women Vs Peninsula") + xlab("Peninsula") + ylab("Income")
+Percentage range for people Employed in the LP is 5-50 (more variable range) and in UP is 11-15. There is a skewness across median value for LP which means the data is not normally distributed in these quartiles. 25 pecent of data in 2nd quartile in LP is more variable with respect to % of people are employed versus the 25 % of data in upper quartile. 
 
-ggplot(county_MI) + geom_boxplot(aes(x = county_MI$peninsula, y = county_MI$Men , fill = county_MI$peninsula)) + ggtitle("Distribution of Men Vs Peninsula") + xlab("Peninsular") + ylab("Income")
+
+```{r bp_walk_by_peninsula}
+ggplot(county_MI) + geom_boxplot(aes(x = county_MI$peninsula, y = county_MI$Walk , fill = county_MI$peninsula)) + ggtitle("Distribution of Walk Vs Peninsula") + xlab("Peninsula") + ylab("Walk")
+```
+
+LP has less percentage (1.75 - 3 %) of people who walk to work as compared to UP (2.5 -6 %). Median values for LP is around 2.5 and distribution in 2nd and 3rd quartile is symmetric which means data is normally distributed in these quartiles.
+Data is skewed and not normally distributed for UP. Median value is slightly less then 5.
+
+
+```{r bp_drive_by_peninsula}
+ggplot(county_MI) + geom_boxplot(aes(x = county_MI$peninsula, y = county_MI$Drive , fill = county_MI$peninsula)) + ggtitle("Distribution of Drive Vs Peninsula") + xlab("Peninsula") + ylab("Drive")
 
 
 ```
+
+Number of drivers driving alone in LP range from 79-83 with median 82. This is a normal distribution becasue, a symmetric distribution can be seen in the 2nd and 3rd quartile which means the spread of values on either side of the median value is approximately same. 
 
 ### Problem 5 - How do regions of the country compare?
 
@@ -271,6 +297,8 @@ xy_inc_commute_peninsula
 
 Your thoughts on the relationship between these variables?
 
+The relationship between MeanCommute and Income appears to be positive, as we move from left to right, the value of income increases with respect to the values of MeanCommute. That indicates the general look of the data line is an uphill pattern
+
 Now, create a few more scatter plots using variables of your choosing in which
 you facet by peninsula as well. How do the relationships compare across the
 peninsulas?
@@ -278,16 +306,32 @@ peninsulas?
 ```{r xy_faceted_peninsula}
 
 ggplot(data = county_MI, aes(y = county_MI$Income, x = county_MI$MeanCommute, color = peninsula)) + geom_point() + labs(x= "Mean Commute", y = "Income") + facet_wrap(~peninsula) + ggtitle("Distirbution of Mean Commute Vs Income")
+```
 
-ggplot(data = county_MI, aes(y = county_MI$Income, x = county_MI$Men, color = peninsula)) + geom_point() + labs(x = "Men", y = "Income") + facet_wrap(~peninsula) + ggtitle("Distirbution of Men Vs Income")
+The relationship between MeanCommute and Income appears to be positive, as we move from left to right, the value of income increases with respect to the values of MeanCommute. That indicates the general look of the data line is an uphill pattern
+
+
+```{r xy_faceted_peninsula}
 
 ggplot(data = county_MI, aes(y = county_MI$Income, x = county_MI$Women, color = peninsula)) + geom_point() + labs(x = "Women", y = "Income") + facet_wrap(~peninsula) + ggtitle("Distirbution of Women Vs Income")
+```
+The relationship between Women and Income appears to be positively correlated. It appears the same for both the peninsulas. The data shows that the linear correlation could be undefined.
 
+
+
+
+```{r xy_faceted_peninsula}
 ggplot(data = county_MI, aes(y = county_MI$Service, x = county_MI$Office, color = peninsula)) + geom_point() + labs(x = "Office", y = "Service") + facet_wrap(~peninsula) + ggtitle("Distirbution of Office Vs Service")
+```
+It appears that the distribution of the point for LP is more scattered between 20-25, indicating there is a low but positive coorelation, whereas, the data for UP is more random.
+
+
+```{r xy_faceted_peninsula}
 
 ggplot(data = county_MI, aes(x= county_MI$Drive, y = county_MI$Walk, color = peninsula)) + geom_point() + labs(y= "Walk", x = "Drive") + facet_wrap(~peninsula) + ggtitle("Distirbution of Walk Vs Drive")
 
 ```
+The relationship between Walk and Drive appears to be negative and has low correlation, as we move from left to right, the value of walk decreases with respect to the values of drive That indicates the general look of the data line is an downhill pattern
 
 
 Now use the full US data frame.
@@ -295,6 +339,13 @@ Now use the full US data frame.
 Create a scatter plot of TotalPop by Income.
 
 ```{r xy_pop_inc}
+ggplot(county_df) + geom_point(aes(x=county_df$Income, y=county_df$TotalPop)) + ggtitle("Total Population By Income") + xlab("Income") + ylab("Total Population")
+
+```
+
+```{r xy_pop_inc}
+
+ggplot(county_df, aes(x=county_df$Income, y=county_df$TotalPop))+ xlab("Total Income") +ylab("Population") + geom_point(shape=1) + ggtitle("Total Population by Income for entire US")+scale_y_continuous(labels = scales::comma)+scale_x_continuous(labels = scales::comma) + coord_trans(y = "log10")
 
 ```
 
